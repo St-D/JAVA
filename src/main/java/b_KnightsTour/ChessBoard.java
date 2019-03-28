@@ -1,66 +1,87 @@
 package b_KnightsTour;
 
 import java.util.Arrays;
-import java.util.List;
 
+/**
+ * This class controls the behavior of chessboard
+ */
 public class ChessBoard {
 
-    private int gridLength = 8;
-    private int gridWidth = 8;
-    private int[][] board = new int[gridLength][gridWidth];
-    private int locationX = (int) (Math.random()*gridLength); //случайная старотовая точка по X
-    private int locationY = (int) (Math.random()*gridWidth);  //случайная старотовая точка по Y
-    List<Integer> validVal =  Arrays.asList(0, 1, 2, 3);      //список валидных значений для ячеек доски
+    private int boardLength;
+    private int boardWidth;
+    private int[][] board;
 
+    /**
+     * Class's constructor with parameters
+     * @param boardLength board size vertical
+     * @param boardWidth board size horizontal
+     */
+    public ChessBoard(int boardLength, int boardWidth) {
 
-    // устанавливает значения на доске (0-пустая клетка,
-    //                                  1-посещена,
-    //                                  2-начало отсчета ходов,
-    //                                  3-окончание ходов.)
-//    public void setChessBoardValue(int val, int x, int y){
+        this.boardLength = boardLength;
+        this.boardWidth = boardWidth;
+
+        board = new int[this.boardLength][this.boardWidth];
+        for (int[] ar : board){
+            Arrays.fill(ar, 0);
+        }
+    }
+
+    /**
+     * This method set a value on chessboard square
+     * @param val square value
+     * @param pos square position on board
+     */
     public void setChessBoardValue(int val, int [] pos){
         int y = pos[0];
         int x = pos[1];
 
-        if (validVal.contains(val)){
-            board[y][x] = val;
-        }
-        else {
-            System.out.println((char)27 + "[31m Для записи состояния ячейки подано невалидное значение: " + val);
-        }
+        board[y][x] = val;
     }
 
-
-    // создает двумерный массив 8х8 заполненый 0 и 2(начало отсчета ходов)
-    public void createChessBoard(){
-        int[] pos = {locationY, locationX};
-        setChessBoardValue(2, pos);
+    /**
+     * This method get the chessboard length
+     * @return length of the board
+     */
+    public int getBoardLength(){
+        return boardLength;
     }
 
+    /**
+     * This method get the chessboard width
+     * @return width of the board
+     */
+    public int getBoardWidth(){
+        return boardWidth;
+    }
 
-    // возвращает доску
+    /**
+     * This method get the chessboard as two-dimensional array
+     * @return width-by-lenght two-dimensional array board
+     */
     public int[][] getChessBoard(){
         return board;
     }
 
-
-    // возвращает начальную позицию
-    public int[] getStartPosition(){
-        int[] pos = {locationY, locationX};
-        return pos;
-    }
-
-
-    // вывод в консоль доски
-    public void printChessBoard(int[][] arg){
-        System.out.println("\t _  _  _  _  _  _  _  _");
-        for (int[] ar : arg){
-            System.out.print("\t|");
+    /**
+     * This method print the board in console
+     */
+    public void printChessBoard(){
+        System.out.println((char)27 + "[31m\t _\t_\t_\t_\t_\t_\t_\t_");
+        for (int[] ar : board){
+            System.out.print((char)27 + "[31m\t|");
             for (int element : ar){
-                System.out.print(element + "  ");
+                if (element == -1){
+                    System.out.print((char)27 + "[31m" + element + "\t");
+                }
+                else if (element == -2){
+                    System.out.print((char)27 + "[32m" + element + "\t");
+                }
+                else {
+                    System.out.print((char)27 + "[34m" + element + "\t");
+                }
             }
             System.out.print("\n");
         }
     }
-
 }

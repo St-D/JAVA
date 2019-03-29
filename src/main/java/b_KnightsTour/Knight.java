@@ -16,6 +16,9 @@ public class Knight {
 
     private ChessBoard board;                               // instant of chessboard
 
+    int startPositionY;
+    int startPositionX;
+
     /**
      * Class's constructor with parameters
      *
@@ -27,6 +30,9 @@ public class Knight {
 
         board.setChessBoardValue(-1, startPositionY, startPositionX);
         this.board = board;
+
+        this.startPositionY = startPositionY;
+        this.startPositionX = startPositionX;
     }
 
     /**
@@ -88,8 +94,8 @@ public class Knight {
      * This method run Knight’s Tour
      */
     public void startKnightTour() {
-        int[] stepBuf = new int[2];          // buffer. Coordinates of the last successful step
-        int[] stepCoord = new int[2];        // current coordinates
+        int[] stepBuf = new int[2];                                 // buffer. Coordinates of the last successful step
+        int[] stepCoord = {startPositionY, startPositionX};         // current coordinates
 
         while (stepCoord != null) {
 

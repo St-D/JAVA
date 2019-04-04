@@ -1,6 +1,7 @@
 package c_KnightsTour;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class controls the behavior of knight
@@ -21,12 +22,12 @@ public class Knight {
             {3, 4, 6, 6, 6, 6, 4, 3},
             {2, 3, 4, 4, 4, 4, 3, 2}};
 
-    private int stepCounter = 0;                            // step counter
+    private int stepCounter = 1;                            // step counter
 
     private ChessBoard board;                               // instant of chessboard
 
-    int positionY;
-    int positionX;
+    private int positionY;
+    private int positionX;
 
     /**
      * Class's constructor with parameters
@@ -37,7 +38,7 @@ public class Knight {
      */
     public Knight(int startPositionY, int startPositionX, ChessBoard board) {
 
-        board.setChessBoardValue(-1, startPositionY, startPositionX);
+        board.setChessBoardValue(stepCounter, startPositionY, startPositionX);
         this.board = board;
 
         positionY = startPositionY;
@@ -51,14 +52,12 @@ public class Knight {
      * @param currentPositionX coordinates by X
      * @return coordinates on the Board {Y, X}
      */
-    private int[] calcStep(int currentPositionY, int currentPositionX) {
-
-        int[] availableStep = new int[2];                               // returned step (null - if step not found)
+    private ArrayList<Integer> calcStep(int currentPositionY, int currentPositionX) {
 
         ArrayList<Integer> availableStepList = new ArrayList<Integer>();      // valid steps ArrayList
         for (int i = 0; i < shiftX.length; i++) {
-            int x = currentPositionX + shiftX[i];
             int y = currentPositionY + shiftY[i];
+            int x = currentPositionX + shiftX[i];
 
             try {
                 // check that the cell is empty:
@@ -71,60 +70,99 @@ public class Knight {
                 continue;
             }
         }
-
-        // choosing a step from possible:
-        if (availableStepList.size() != 0) {
-            int randomStepIndex = chooseStep(availableStepList);
-
-            availableStep[0] = currentPositionY + shiftY[randomStepIndex];
-            availableStep[1] = currentPositionX + shiftX[randomStepIndex];
-        } else {
-            availableStep = null;
-        }
-
-        return availableStep;
+        return availableStepList;
     }
 
     /**
      * This method choose a step (step index) from the list of possible
      *
      * @param availableStepListArg valid steps ArrayList
-     * @return index of ArrayList steps
+     * @return shift-index List
      */
     private int chooseStep(ArrayList<Integer> availableStepListArg) {
 
-        int minimumPriority = 8; //all eight possible moves in terms of its horizontal and vertical components
-        int searchIndex = 0;
-        for (int arIndex : availableStepListArg) {
-            int nextStepPriority = stepPriority[positionY + shiftY[arIndex]][positionX + shiftX[arIndex]];
+        ArrayList<Integer> lowPriorityIndexList = getLowPriorityIndexList(availableStepListArg);
 
-            if (minimumPriority >= nextStepPriority) {
-                minimumPriority = nextStepPriority;
-                searchIndex = arIndex;
+        if (lowPriorityIndexList.size() == 1) {                 // if priority equal for all squares:
+            return availableStepListArg.get(lowPriorityIndexList.get(0));
+        } else if (lowPriorityIndexList.size() == 0) {          // if end of Knight’s Tour
+            return -1;
+        } else {
+            ArrayList<Integer> oneStepLaterAvailable;
+            ArrayList<Integer> stepPrioritySumList = new ArrayList<Integer>();
+            int stepLaterPosY;
+            int stepLaterPosX;
+
+            for (int stepIndex : lowPriorityIndexList) {
+                int ind = availableStepListArg.get(stepIndex);
+                stepLaterPosY = positionY + shiftY[ind];
+                stepLaterPosX = positionX + shiftX[ind];
+                oneStepLaterAvailable = calcStep(stepLaterPosY, stepLaterPosX);
+
+                int stepPrioritySum = 0;                        //sum of the squares priorities for the next step
+                for (int prorityValIndex : oneStepLaterAvailable) {
+                    stepPrioritySum += stepPriority[stepLaterPosY + shiftY[prorityValIndex]][stepLaterPosX + shiftX[prorityValIndex]];
+                }
+                stepPrioritySumList.add(stepPrioritySum);
             }
+            int minSumPriorityIndex = stepPrioritySumList.indexOf(Collections.min(stepPrioritySumList));
+            return availableStepListArg.get(lowPriorityIndexList.get(minSumPriorityIndex));
         }
-        return searchIndex;
     }
+
+
+    /**
+     * This method search shift index with low priority
+     *
+     * @param availableStepListArg valid steps ArrayList
+     * @return list with low-priority shift index
+     */
+    private ArrayList<Integer> getLowPriorityIndexList(ArrayList<Integer> availableStepListArg) {
+
+        ArrayList<Integer> lowPriorityIndexList = new ArrayList<Integer>(); //low-priority shift-index step list
+        ArrayList<Integer> priorityList = new ArrayList<Integer>();         //priority list
+
+        for (int shiftIndex : availableStepListArg) {
+            priorityList.add(stepPriority[positionY + shiftY[shiftIndex]][positionX + shiftX[shiftIndex]]);
+        }
+
+        try {
+            int minElem = Collections.min(priorityList);
+            for (int i = 0; i < priorityList.size(); i++) {
+                // for each element with low-priority
+                if (priorityList.get(i) == minElem) {
+                    lowPriorityIndexList.add(i);
+                }
+            }
+        } catch (java.util.NoSuchElementException e) {
+            lowPriorityIndexList.clear();
+            return lowPriorityIndexList;
+        }
+
+        return lowPriorityIndexList;
+    }
+
 
     /**
      * This method run Knight’s Tour
      */
     public void startKnightTour() {
-        int[] stepBuf = new int[2];           // buffer. Coordinates of the last successful step
-        int[] stepCoord = new int[2];         // current coordinates
+        int[] stepBuf = new int[2];                                     // buffer. Coordinates of the last successful step
+        ArrayList<Integer> stepCoord = calcStep(positionY, positionX);  // current coordinates (Start tour coordinates)
+        int shiftIndex;
 
-        while (stepCoord != null) {
+        while (stepCoord.size() != 0) {
 
             stepCoord = calcStep(positionY, positionX);
+            shiftIndex = chooseStep(stepCoord);
 
-            if (stepCoord == null) {
-                board.setChessBoardValue(-2, stepBuf[0], stepBuf[1]);
+            if (stepCoord.size() == 0) {
                 break;                                  // exit the cycle
             }
 
             stepCounter++;
-            positionY = stepCoord[0];
-            positionX = stepCoord[1];
+            positionY += shiftY[shiftIndex];
+            positionX += shiftX[shiftIndex];
 
             board.setChessBoardValue(stepCounter, positionY, positionX);
 

@@ -1,4 +1,5 @@
-Task C
+Task C + D
+c:
     After attempting to write and run a Knight’s Tour application, you’ve probably developed
 some valuable insights. We’ll use these insights to develop a heuristic (i.e., a common-
 sense rule) for moving the knight. Heuristics do not guarantee success, but a
@@ -33,3 +34,9 @@ will remain equal to precisely the number of squares from which that square may
 be reached.] Run this version of your application. Did you get a full tour? Modify the
 application to run 64 tours, one starting from each square of the chessboard. How
 many full tours did you get?
+
+d:
+Write a version of the Knight’s Tour application that, when encountering a tie between
+two or more squares, decides what square to choose by looking ahead to those squares
+reachable from the “tied” squares. Your application should move to the tied square for
+which the next move would arrive at a square with the lowest accessibility number.

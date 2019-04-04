@@ -75,9 +75,9 @@ public class ChessBoard {
         for (int[] ar : board) {
             System.out.print((char) 27 + "[31m\t|");
             for (int element : ar) {
-                if (element == -1) {
+                if (element == 1) {
                     System.out.print((char) 27 + "[31m" + element + "\t");
-                } else if (element == -2) {
+                } else if (element == 0) {
                     System.out.print((char) 27 + "[32m" + element + "\t");
                 } else {
                     System.out.print((char) 27 + "[34m" + element + "\t");
@@ -85,7 +85,5 @@ public class ChessBoard {
             }
             System.out.print("\n");
         }
-        System.out.println((char) 27 + "[33m\n'-1' - Knight’s Tour start square\n'-2' - Knight’s Tour end square");
-
     }
 }

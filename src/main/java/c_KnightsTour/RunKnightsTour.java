@@ -2,7 +2,7 @@ package c_KnightsTour;
 
 
 /**
- * This class knight's tour
+ * This class run knight's tour
  */
 public class RunKnightsTour {
 

@@ -94,9 +94,8 @@ public class Knight {
             int stepLaterPosX;
 
             for (int stepIndex : lowPriorityIndexList) {
-                int ind = availableStepListArg.get(stepIndex);
-                stepLaterPosY = positionY + shiftY[ind];
-                stepLaterPosX = positionX + shiftX[ind];
+                stepLaterPosY = positionY + shiftY[availableStepListArg.get(stepIndex)];
+                stepLaterPosX = positionX + shiftX[availableStepListArg.get(stepIndex)];
                 oneStepLaterAvailable = calcStep(stepLaterPosY, stepLaterPosX);
 
                 int stepPrioritySum = 0;                        //sum of the squares priorities for the next step
@@ -147,16 +146,15 @@ public class Knight {
      * This method run Knight’s Tour
      */
     public void startKnightTour() {
-        int[] stepBuf = new int[2];                                     // buffer. Coordinates of the last successful step
-        ArrayList<Integer> stepCoord = calcStep(positionY, positionX);  // current coordinates (Start tour coordinates)
+        ArrayList<Integer> stepCoordinate = calcStep(positionY, positionX);  // current coordinates (Start tour coordinates)
         int shiftIndex;
 
-        while (stepCoord.size() != 0) {
+        while (stepCoordinate.size() != 0) {
 
-            stepCoord = calcStep(positionY, positionX);
-            shiftIndex = chooseStep(stepCoord);
+            stepCoordinate = calcStep(positionY, positionX);
+            shiftIndex = chooseStep(stepCoordinate);
 
-            if (stepCoord.size() == 0) {
+            if (stepCoordinate.size() == 0) {
                 break;                                  // exit the cycle
             }
 
@@ -166,8 +164,6 @@ public class Knight {
 
             board.setChessBoardValue(stepCounter, positionY, positionX);
 
-            stepBuf[0] = positionY;
-            stepBuf[1] = positionX;
         }
 
         board.printChessBoard();
